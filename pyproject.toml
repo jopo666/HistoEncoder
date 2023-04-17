@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "histoencoder"
+version = "0.1.0"
+description = ""
+authors = ["jopo666 <jopo@birdlover.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+timm = "^0.5"
+torch = "^2"
+torchvision = "^0.15"
+histoprep = "^2"
+rich-click = "^1.6"
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "*"
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
