@@ -128,4 +128,4 @@ def _unpack_coordinates_from_paths(paths: list[str]) -> dict[str, np.ndarray]:
                 output[key].append(int(text[1:]))
             else:
                 output[key].append(np.nan)
-    return {k: np.array(v) for k, v in output.items()}
+    return {k: np.array(v, dtype=int) for k, v in output.items()}
