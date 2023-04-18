@@ -5,7 +5,7 @@ from typing import Union
 from torch import Tensor, nn
 from torch.utils.data import DataLoader
 
-import histoencoder._functional as F
+import histoencoder.functional as F
 
 
 class HistoEncoder(nn.Module):
@@ -18,29 +18,24 @@ class HistoEncoder(nn.Module):
             model_name: Name of the encoder model.
 
         Raises:
-            ValueError: Model does not exist.
+            ValueError: Model name not found.
 
         Returns:
             Requested encoder model.
         """
         super().__init__()
-        self.__model_name = model_name
-        self.encoder, self.__model_url = F.create_encoder(model_name)
+        self.__model_name = model_name.lower()
+        self.encoder = F.create_encoder(model_name)
+
+    @property
+    def model_name(self) -> str:
+        """Name of the encoder model checkpoint."""
+        return self.__model_name.lower()
 
     @staticmethod
     def list_encoders() -> list[str]:
         """List all available model checkpoints."""
         return F.list_encoders()
-
-    @property
-    def model_name(self) -> str:
-        """Name of the encoder model checkpoint."""
-        return self.__model_name
-
-    @property
-    def model_url(self) -> str:
-        """Path to the encoder model checkpoint."""
-        return self.__model_url
 
     def yield_features(
         self, loader: DataLoader
@@ -51,6 +46,10 @@ class HistoEncoder(nn.Module):
         Args:
             loader: `DataLoader` yielding a batches with images as the first or only
                 element.
+
+        Raises:
+            ValueError: Loader `batch_size` is `None`.
+            TypeError: The first or only batch element is not a batch of image tensors.
 
         Yields:
             Loader batches with images replaced by features extracted by the encoder.
@@ -69,15 +68,18 @@ class HistoEncoder(nn.Module):
         """Write features to disk.
 
         Args:
+            encoder: XCiT encoder model for extracting features.
             output_dir: Output directory for feature parquet files.
-            loader: `DataLoader` yielding a batches with images as the first or only
-                element.
+            loader: `DataLoader` yielding tensor images as the first or only element.
             max_samples: Maximum samples per parquet file. Defaults to 65536.
             overwrite: Remove everything in output directory. Defaults to False.
             verbose: Enable `tqdm.tqdm` progress bar. Defaults to True.
 
         Raises:
             FileExistsError: Output directory exists but `overwrite=False`.
+            TypeError: Encoder model is not `XCiT`.
+            ValueError: Loader `batch_size` is `None`.
+            TypeError: The first or only batch element is not a batch of image tensors.
         """
         F.save_features(
             encoder=self.encoder,
@@ -109,7 +111,7 @@ class HistoEncoder(nn.Module):
             freeze_last_mlp_layer: Freeze the last mlp-layer in the last cls attention
                 block. Defaults to `False`.
         """
-        F.freeze_encoder_parameters(
+        F.freeze_encoder(
             encoder=self.encoder,
             num_liquid=num_liquid,
             freeze_cls_token=freeze_cls_token,

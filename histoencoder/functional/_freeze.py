@@ -1,9 +1,9 @@
-__all__ = ["freeze_encoder_parameters"]
-
 import torch
 
+from ._check import check_encoder
 
-def freeze_encoder_parameters(
+
+def freeze_encoder(
     encoder: torch.nn.Module,
     num_liquid: int = 0,
     *,
@@ -16,7 +16,7 @@ def freeze_encoder_parameters(
     """Freeze XCiT encoder parameters.
 
     Args:
-        encoder: XCiT model without a head.
+        encoder: XCiT encoder model.
         num_liquid: Number of liquid attention blocks. Defaults to 0.
         freeze_cls_token: Freeze cls_token parameters. Defaults to True.
         freeze_patch_embed: Freeze patch_embed parameters. Defaults to True.
@@ -24,7 +24,11 @@ def freeze_encoder_parameters(
         freeze_layer_norm: Freeze layer_norm parameters. Defaults to True.
         freeze_last_mlp_layer: Freeze the last mlp-layer in the last cls attention
             block. Defaults to False.
+
+    Raises:
+        TypeError: Encoder model is not `XCiT`.
     """
+    check_encoder(encoder)
     # Calculate number of blocks.
     num_cls_blocks = len(encoder.cls_attn_blocks)
     num_liquid_cls_blocks = min(num_cls_blocks, num_liquid)
@@ -54,7 +58,8 @@ def freeze_encoder_parameters(
             else:
                 param.requires_grad = False
         elif (
-            (not freeze_cls_token and name.startswith("cls_token"))
+            name.startswith("head")  # Head is always liquid
+            or (not freeze_cls_token and name.startswith("cls_token"))
             or (not freeze_patch_embed and name.startswith("patch_embed"))
             or (not freeze_pos_embed and name.startswith("pos_embed"))
             or (not freeze_layer_norm and name.startswith("norm"))
@@ -62,15 +67,3 @@ def freeze_encoder_parameters(
             param.requires_grad = True
         else:
             param.requires_grad = False
-
-
-def freeze_all_parameters(model: torch.nn.Module) -> None:
-    """Set all `requires_grad="False"` for all parameters in model."""
-    for __, param in model.named_parameters():
-        param.requires_grad = False
-
-
-def unfreeze_all_parameters(model: torch.nn.Module) -> None:
-    """Set all `requires_grad="True"` for all parameters in model."""
-    for __, param in model.named_parameters():
-        param.requires_grad = True

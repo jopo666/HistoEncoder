@@ -1,5 +1,3 @@
-__all__ = ["save_features"]
-
 import shutil
 from pathlib import Path
 from typing import Union
@@ -29,16 +27,18 @@ def save_features(
     """Write features to disk.
 
     Args:
-        encoder: Model for extracting features.
+        encoder: XCiT encoder model for extracting features.
         output_dir: Output directory for feature parquet files.
-        loader: `DataLoader` yielding tensor images or a tuple with tensor images as the
-            first element.
+        loader: `DataLoader` yielding tensor images as the first or only element.
         max_samples: Maximum samples per parquet file. Defaults to 65536.
         overwrite: Remove everything in output directory. Defaults to False.
         verbose: Enable `tqdm.tqdm` progress bar. Defaults to True.
 
     Raises:
         FileExistsError: Output directory exists but `overwrite=False`.
+        TypeError: Encoder model is not `XCiT`.
+        ValueError: Loader `batch_size` is `None`.
+        TypeError: The first or only batch element is not a batch of image tensors.
     """
     output_dir = _prepare_output_dir(output_dir, overwrite=overwrite)
     batches = []

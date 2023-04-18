@@ -1,10 +1,10 @@
-__all__ = ["yield_features"]
-
 from collections.abc import Generator, Iterable
 from typing import Any, Union
 
 import torch
 from torch import Tensor
+
+from ._check import check_encoder
 
 ERROR_NON_BATCHED = "Batch size should not be None."
 ERROR_BATCH_TYPE = "Batch should be a tensor, or a list/tuple."
@@ -15,7 +15,23 @@ ERROR_ELEMENT = "Expected the first batch element to be a tensor."
 def yield_features(
     encoder: torch.nn.Module, loader: Iterable[Union[Tensor, tuple[Tensor, ...]]]
 ) -> Generator[Union[Tensor, tuple[Tensor, ...]], None, None]:
-    """Yield encoded features by replacing batch images with encoded features."""
+    """Yield features for images in `loader` by replacing images in the batch with
+    features.
+
+    Args:
+        encoder: XCiT encoder model.
+        loader: `DataLoader` yielding a batches with images as the first or only
+            element.
+
+    Raises:
+        TypeError: Encoder model is not `XCiT`.
+        ValueError: Loader `batch_size` is `None`.
+        TypeError: The first or only batch element is not a batch of image tensors.
+
+    Yields:
+        Loader batches with images replaced by features extracted by the encoder.
+    """
+    check_encoder(encoder)
     if loader.batch_size is None:
         raise ValueError(ERROR_NON_BATCHED)
     encoder.eval()
