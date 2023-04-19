@@ -133,4 +133,4 @@ class HistoEncoder(nn.Module):
 
     def __repr__(self) -> str:
         name = self.__class__.__name__
-        return f"{name}(name='{self.model_name}', url='{self.model_url}')"
+        return f"{name}(name='{self.model_name}')"
