@@ -91,7 +91,7 @@ class HistoEncoder:
             verbose=verbose,
         )
 
-    def freeze_encoder_parameters(
+    def freeze_encoder(
         self,
         num_liquid: int = 0,
         *,
