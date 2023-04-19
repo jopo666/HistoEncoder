@@ -1,86 +1,85 @@
-__all__ = ["prepare_parameter_groups", "update_weight_decay", "update_lr"]
-
 import torch
+from timm.models.xcit import XCiT
+
+from ._check import check_encoder
+
+NO_DECAY = 1.0
+LR_SCALE_INDEX_ZERO = ("cls_token", "patch_embed", "pos_embed")
+ERROR_DECAY = "Learning rate decay should be in range (0, 1], got {}."
 
 
-def prepare_parameter_groups(
-    model: torch.nn.Module,
+def get_parameter_groups(
+    encoder: XCiT,
     *,
     lr: float = 0.001,
     weight_decay: float = 0.05,
     lr_decay: float = 0.75,
     filter_1d: bool = True,
 ) -> list[dict]:
-    """Prepare `histoencoder` model parameterss for an optimizer.
+    """Prepare XCiT encoder parameter groups for an optimizer.
 
     Args:
-        model: Model to be optimizer.
+        encoder: XCiT encoder model.
         lr: Learning rate.
         weight_decay: Weight decay.
-        lr_decay: Learning rate decay for ViT models. Defaults to 0.75.
-        filter_1d: Filter 1 dimensional params from weight decay. Defaults to True.
+        lr_decay: Learning rate decay (per attention blocks). Defaults to 0.75.
+        filter_1d: Filter 1 dimensional parameters from weight decay. Defaults to True.
 
     Returns:
-        Parameter groups
+        Parameter groups.
     """
-    num_layers = (
-        len(model.blocks) + len(model.cls_attn_blocks) + 1 if lr_decay < 1.0 else 1
-    )
-    layer_scales = [lr_decay ** (num_layers - i) for i in range(num_layers + 1)]
-    # Define no weight decay list.
-    no_weight_decay = (
-        model.no_weight_decay() if hasattr(model, "no_weight_decay") else []
-    )
-    # Collect all parameters.
+    check_encoder(encoder)
+    if not 0 < lr_decay <= 1:
+        raise ValueError(ERROR_DECAY.format(lr_decay))
+    num_param_groups = len(encoder.blocks) + len(encoder.cls_attn_blocks) + 1
+    layer_lr_scales = [
+        lr_decay ** (num_param_groups - i) for i in range(num_param_groups + 1)
+    ]
     parameter_groups = {}
-    for name, param in model.named_parameters():
+    for name, param in encoder.named_parameters():
         if not param.requires_grad:
             continue
         # Determine weight decay.
-        if name in no_weight_decay or (param.ndim == 1 and filter_1d):
+        if name in encoder.no_weight_decay() or (param.ndim == 1 and filter_1d):
             decay_name = "no_decay"
-            layer_weight_decay = 0.0
+            group_weight_decay = 0.0
         else:
             decay_name = "decay"
-            layer_weight_decay = weight_decay
-        # Determine block index.
-        if (
-            any(x in name for x in ["cls_token", "patch_embed", "pos_embed"])
-            or num_layers == 1
-        ):
-            block_idx = 0
+            group_weight_decay = weight_decay
+        # Determine decay index.
+        if lr_decay == NO_DECAY or name.startswith(LR_SCALE_INDEX_ZERO):
+            scale_index = 0
         elif name.startswith("blocks"):
-            block_idx = int(name.split(".")[1]) + 1
+            # blocks.{number}.{name}
+            scale_index = int(name.split(".")[1]) + 1
         elif name.startswith("cls_attn_blocks"):
-            block_idx = int(name.split(".")[1]) + len(model.blocks) + 1
+            # cls_attn_blocks.{number}.{name}
+            scale_index = int(name.split(".")[1]) + len(encoder.blocks) + 1
         else:
-            block_idx = num_layers
-        # Define group name.
-        group_name = f"layer_{block_idx}_{decay_name}"
+            scale_index = num_param_groups
+        group_name = f"params_{scale_index}_{decay_name}"
         # Initialize group.
         if group_name not in parameter_groups:
             parameter_groups[group_name] = {
                 "name": group_name,
-                "lr": lr * layer_scales[block_idx],
-                "lr_scale": layer_scales[block_idx],
-                "weight_decay": layer_weight_decay,
+                "lr": lr * layer_lr_scales[scale_index],
+                "lr_scale": layer_lr_scales[scale_index],
+                "weight_decay": group_weight_decay,
                 "params": [],
-                "names": [],  # Just used for debugging.
             }
         # Add parameter.
         parameter_groups[group_name]["params"].append(param)
-        parameter_groups[group_name]["names"].append(name)
     return list(parameter_groups.values())
 
 
 def update_weight_decay(optimizer: torch.optim.Optimizer, weight_decay: float) -> None:
-    """Update optimizer weight decay. Useful for using custom schedules."""
+    """Update optimizer weight decay."""
     for param_group in optimizer.param_groups:
         if "no_decay" not in param_group.get("name", "no_name"):
             param_group["weight_decay"] = weight_decay
 
 
 def update_lr(optimizer: torch.optim.Optimizer, lr: float) -> None:
-    """Update optimizer learning rate. Useful for using custom schedules."""
+    """Update optimizer learning rate (taking `lr_scale` into consideration)."""
     for param_group in optimizer.param_groups:
         param_group["lr"] = param_group.get("lr_scale", 1.0) * lr
