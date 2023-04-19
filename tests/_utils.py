@@ -7,6 +7,8 @@ from histoprep.functional import get_mean_and_std_from_paths
 from histoprep.utils import SlideReaderDataset, TileImageDataset
 from torch.utils.data import DataLoader, Dataset
 
+import histoencoder.functional as F
+
 SLIDE_PATH = Path(__file__).parent / "data" / "slide.jpeg"
 TILE_DIR = Path(__file__).parent / "data" / "slide" / "tiles"
 
@@ -17,6 +19,12 @@ class CustomDataset:
 
     def __getitem__(self, index: int) -> torch.Tensor:
         return torch.zeros(3, 224, 224) + index, "random_shit", 666, {"dog": "good_boi"}
+
+
+def generate_features(num_samples: int = 20) -> None:
+    encoder = F.create_encoder("prostate_small")
+    loader = create_tile_loader(num_samples=num_samples)
+    return torch.concat([x for (x, __) in F.yield_features(encoder, loader)], axis=0)
 
 
 def create_custom_loader(batch_size: int = 2) -> Dataset:

@@ -1,6 +1,7 @@
 """HistoEncoder functionals."""
 
 __all__ = [
+    "cluster_features",
     "create_encoder",
     "freeze_encoder",
     "list_encoders",
@@ -11,6 +12,7 @@ __all__ = [
     "update_weight_decay",
 ]
 
+from ._cluster import cluster_features
 from ._features import yield_features
 from ._freeze import freeze_encoder
 from ._model import create_encoder, list_encoders
