@@ -35,6 +35,7 @@ def yield_features(
     encoder = check_encoder(encoder)
     if loader.batch_size is None:
         raise ValueError(ERROR_NON_BATCHED)
+    set_to_train = encoder.training
     encoder.eval()
     model_device = next(encoder.parameters()).device
     for batch in loader:
@@ -46,7 +47,8 @@ def yield_features(
             yield features
         else:
             yield features, *batch_extras
-    encoder.train()
+    if set_to_train:
+        encoder.train()
 
 
 def _unpack_batch(batch: Union[torch.Tensor, tuple, list]) -> tuple[Tensor, Any]:
