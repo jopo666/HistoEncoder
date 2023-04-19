@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import polars as pl
@@ -20,7 +20,7 @@ def save_features(
     output_dir: Union[str, Path],
     loader: DataLoader,
     *,
-    max_samples: int = 2**16,
+    max_samples: Optional[int] = 2**16,
     overwrite: bool = False,
     verbose: bool = True,
 ) -> None:
@@ -30,7 +30,8 @@ def save_features(
         encoder: XCiT encoder model for extracting features.
         output_dir: Output directory for feature parquet files.
         loader: `DataLoader` yielding tensor images as the first or only element.
-        max_samples: Maximum samples per parquet file. Defaults to 65536.
+        max_samples: Maximum samples per parquet file. If `None`, all features are saved
+            into a single file. Defaults to 65536.
         overwrite: Remove everything in output directory. Defaults to False.
         verbose: Enable `tqdm.tqdm` progress bar. Defaults to True.
 
@@ -49,15 +50,16 @@ def save_features(
         disable=not verbose,
     ):
         batches.append(batch)
-        if len(batches) * loader.batch_size >= max_samples:
+        if max_samples is not None and len(batches) * loader.batch_size >= max_samples:
             _collect_to_dataframe(
                 batches=batches, dataset=loader.dataset
             ).write_parquet(file=output_dir / f"features_{parquet_index}.parquet")
             batches = []
             parquet_index += 1
     if len(batches) > 0:
+        name = "features" if parquet_index == 1 else f"features_{parquet_index}"
         _collect_to_dataframe(batches=batches, dataset=loader.dataset).write_parquet(
-            file=output_dir / f"features_{parquet_index}.parquet"
+            file=output_dir / f"{name}.parquet"
         )
 
 

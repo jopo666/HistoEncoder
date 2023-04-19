@@ -46,6 +46,13 @@ def test_write_features_custom(tmp_path: Path) -> None:
     )
 
 
+def test_write_features_no_max_samples(tmp_path: Path) -> None:
+    encoder = F.create_encoder("prostate_small")
+    loader = create_reader_loader(batch_size=2, num_samples=8)
+    F.save_features(encoder, tmp_path / "features", loader, max_samples=None)
+    assert [x.name for x in (tmp_path / "features").iterdir()] == ["features.parquet"]
+
+
 def save_and_check_feature_dataframes(
     tmp_path: Path, encoder: XCiT, loader: DataLoader, columns: list[str]
 ) -> None:

@@ -12,8 +12,9 @@ def test_clustering_dataframe(tmp_path: Path) -> None:
         F.create_encoder("prostate_small"),
         output_dir=tmp_path,
         loader=create_tile_loader(num_samples=20),
+        max_samples=None,
     )
-    feats = pl.read_parquet(tmp_path / "features_1.parquet")
+    feats = pl.read_parquet(tmp_path / "features.parquet")
     clusters = F.cluster_features(feats, n_clusters=[4, 8, 16, 32])
     assert clusters.columns == ["n_clusters=4", "n_clusters=8", "n_clusters=16"]
     assert clusters.shape == (20, 3)
