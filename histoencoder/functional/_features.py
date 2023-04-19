@@ -2,6 +2,7 @@ from collections.abc import Generator, Iterable
 from typing import Any, Union
 
 import torch
+from timm.models.xcit import XCiT
 from torch import Tensor
 
 from ._check import check_encoder
@@ -13,7 +14,7 @@ ERROR_ELEMENT = "Expected the first batch element to be a tensor."
 
 @torch.no_grad()
 def yield_features(
-    encoder: torch.nn.Module, loader: Iterable[Union[Tensor, tuple[Tensor, ...]]]
+    encoder: XCiT, loader: Iterable[Union[Tensor, tuple[Tensor, ...]]]
 ) -> Generator[Union[Tensor, tuple[Tensor, ...]], None, None]:
     """Yield features for images in `loader` by replacing images in the batch with
     features.
@@ -31,7 +32,7 @@ def yield_features(
     Yields:
         Loader batches with images replaced by features extracted by the encoder.
     """
-    check_encoder(encoder)
+    encoder = check_encoder(encoder)
     if loader.batch_size is None:
         raise ValueError(ERROR_NON_BATCHED)
     encoder.eval()

@@ -1,10 +1,15 @@
-import torch
+from timm.models.xcit import XCiT
 
 from ._check import check_encoder
 
+ERROR_NOT_XCIT = "Expected encoder to be XCiT model, got {}."
+ERROR_DECAY = "Learning rate decay should be in range (0, 1], got {}."
+NO_DECAY = 1.0
+LR_SCALE_INDEX_ZERO = ("cls_token", "patch_embed", "pos_embed")
+
 
 def freeze_encoder(
-    encoder: torch.nn.Module,
+    encoder: XCiT,
     num_liquid: int = 0,
     *,
     freeze_cls_token: bool = True,
@@ -28,7 +33,7 @@ def freeze_encoder(
     Raises:
         TypeError: Encoder model is not `XCiT`.
     """
-    check_encoder(encoder)
+    encoder = check_encoder(encoder)
     # Calculate number of blocks.
     num_cls_blocks = len(encoder.cls_attn_blocks)
     num_liquid_cls_blocks = min(num_cls_blocks, num_liquid)
@@ -45,8 +50,9 @@ def freeze_encoder(
         if name.startswith("cls_attn_blocks"):
             block_idx = int(name.split(".")[1])
             if block_idx in liquid_cls_block_idx or (
-                freeze_last_mlp_layer
-                and (block_idx == num_cls_blocks - 1 and "mlp" in name)
+                not freeze_last_mlp_layer
+                and block_idx == num_cls_blocks - 1
+                and "mlp" in name
             ):
                 param.requires_grad = True
             else:

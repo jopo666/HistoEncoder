@@ -5,7 +5,7 @@ from ._check import check_encoder
 
 NO_DECAY = 1.0
 LR_SCALE_INDEX_ZERO = ("cls_token", "patch_embed", "pos_embed")
-ERROR_DECAY = "Learning rate decay should be in range (0, 1], got {}."
+ERROR_DECAY = "Learning rate decay should be in range (0, 1], got '{}'."
 
 
 def get_parameter_groups(
@@ -28,7 +28,7 @@ def get_parameter_groups(
     Returns:
         Parameter groups.
     """
-    check_encoder(encoder)
+    encoder = check_encoder(encoder)
     if not 0 < lr_decay <= 1:
         raise ValueError(ERROR_DECAY.format(lr_decay))
     num_param_groups = len(encoder.blocks) + len(encoder.cls_attn_blocks) + 1

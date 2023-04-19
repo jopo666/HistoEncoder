@@ -1,5 +1,10 @@
-import timm
 import torch
+from timm.models.xcit import (
+    XCiT,
+    xcit_large_24_p16_224,
+    xcit_medium_24_p16_224,
+    xcit_small_12_p16_224,
+)
 
 ERROR_MODEL_NOT_FOUND = "Model '{}' could not be found, select from: {}"
 AVAILABLE_ENCODERS = {
@@ -7,14 +12,14 @@ AVAILABLE_ENCODERS = {
     "prostate_medium": "/data/models/prostate_medium.pth",
     "prostate_large": "/data/models/prostate_large.pth",
 }
-SIZE_TO_MODEL_NAME = {
-    "small": "xcit_small_12_p16_224",
-    "medium": "xcit_medium_24_p16_224",
-    "large": "xcit_large_24_p16_224",
+SIZE_TO_MODEL = {
+    "small": xcit_small_12_p16_224,
+    "medium": xcit_medium_24_p16_224,
+    "large": xcit_large_24_p16_224,
 }
 
 
-def create_encoder(model_name: str) -> torch.nn.Module:
+def create_encoder(model_name: str) -> XCiT:
     """Create XCiT encoder model.
 
     Args:
@@ -30,9 +35,7 @@ def create_encoder(model_name: str) -> torch.nn.Module:
     if model_url is None:
         raise ValueError(ERROR_MODEL_NOT_FOUND.format(model_name, list_encoders()))
     *_, model_size = model_name.split("_")
-    encoder = timm.create_model(
-        model_name=SIZE_TO_MODEL_NAME[model_size], num_classes=0
-    )
+    encoder = SIZE_TO_MODEL[model_size](num_classes=0)
     encoder.load_state_dict(torch.load(model_url))
     return encoder
 

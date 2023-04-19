@@ -219,7 +219,7 @@ woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
 
 [[package]]
 name = "histoprep"
-version = "2.0.1"
+version = "2.0.2"
 description = "Read and process histological slide images with python!"
 category = "main"
 optional = false
@@ -1605,8 +1605,8 @@ fonttools = [
     {file = "fonttools-4.39.3.zip", hash = "sha256:9234b9f57b74e31b192c3fc32ef1a40750a8fbc1cd9837a7b7bfc4ca4a5c51d7"},
 ]
 histoprep = [
-    {file = "histoprep-2.0.1-py3-none-any.whl", hash = "sha256:b2bd9093eac68fb559637af94ef4844d2243920dea1681dafbfc69abac32e59f"},
-    {file = "histoprep-2.0.1.tar.gz", hash = "sha256:9fb808a135303c8e9d9a7507aee9c7b4ed8ea599195226d904f5543a56a4b880"},
+    {file = "histoprep-2.0.2-py3-none-any.whl", hash = "sha256:b67d8f97bb306132e88ccf147cd1aeb91b36a5da82574cdf0dd9eab73048165b"},
+    {file = "histoprep-2.0.2.tar.gz", hash = "sha256:251ee6d7d007065bd359843a6ea6dd1aae075771259b528b3c5d8221da55b0eb"},
 ]
 idna = [
     {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},

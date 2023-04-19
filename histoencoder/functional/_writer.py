@@ -4,9 +4,9 @@ from typing import Union
 
 import numpy as np
 import polars as pl
-import torch
 import tqdm
 from histoprep.utils import SlideReaderDataset, TileImageDataset
+from timm.models.xcit import XCiT
 from torch import Tensor
 from torch.utils.data import DataLoader, Dataset
 
@@ -16,7 +16,7 @@ ERROR_OUTPUT_EXISTS = "Output directory exists but `overwrite=False`."
 
 
 def save_features(
-    encoder: torch.nn.Module,
+    encoder: XCiT,
     output_dir: Union[str, Path],
     loader: DataLoader,
     *,

@@ -2,14 +2,15 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Union
 
-from torch import Tensor, nn
+from torch import Tensor
 from torch.utils.data import DataLoader
 
 import histoencoder.functional as F
 
 
-class HistoEncoder(nn.Module):
-    """Wrapper around the `XCiT` encoder model with useful functionality."""
+class HistoEncoder:
+    """Lightweight wrapper around the `XCiT` encoder model and
+    `histoencoder.functionals`, which have been implemented as class methods."""
 
     def __init__(self, model_name: str) -> None:
         """Create a model based on given name.
@@ -120,16 +121,6 @@ class HistoEncoder(nn.Module):
             freeze_layer_norm=freeze_layer_norm,
             freeze_last_mlp_layer=freeze_last_mlp_layer,
         )
-
-    def freeze_all_encoder_parameters(self) -> None:
-        """Set `requires_grad=False` for all parameters in the encoder."""
-        for param in self.encoder.parameters():
-            param.requires_grad = False
-
-    def unfreeze_all_encoder_parameters(self) -> None:
-        """Set `requires_grad=True` for all parameters in the encoder."""
-        for param in self.encoder.parameters():
-            param.requires_grad = True
 
     def __repr__(self) -> str:
         name = self.__class__.__name__
