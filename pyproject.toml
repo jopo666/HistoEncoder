@@ -5,6 +5,9 @@ description = ""
 authors = ["jopo666 <jopo@birdlover.com>"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+HistoEncoder = 'histoencoder._cli._run:cli'
+
 [tool.poetry.dependencies]
 python = "^3.9"
 timm = "^0.5"
@@ -12,10 +15,12 @@ torch = "^2"
 torchvision = "^0.15"
 histoprep = "^2"
 rich-click = "^1.6"
+scikit-learn = "*"
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "*"
 pytest = "*"
+pytest-console-scripts = "^1.3.1"
 
 [build-system]
 requires = ["poetry-core"]

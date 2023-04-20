@@ -9,8 +9,10 @@ from torch.utils.data import DataLoader, Dataset
 
 import histoencoder.functional as F
 
-SLIDE_PATH = Path(__file__).parent / "data" / "slide.jpeg"
-TILE_DIR = Path(__file__).parent / "data" / "slide" / "tiles"
+DATA_DIR = Path(__file__).parent / "data"
+SLIDE_PATH = DATA_DIR / "slide.jpeg"
+SLIDE_DIR = DATA_DIR / "slide"
+TILE_DIR = SLIDE_DIR / "tiles"
 
 
 class CustomDataset:
