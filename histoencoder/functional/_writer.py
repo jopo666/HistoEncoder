@@ -1,4 +1,3 @@
-import shutil
 from pathlib import Path
 from typing import Optional, Union
 
@@ -12,7 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from ._features import yield_features
 
-ERROR_OUTPUT_EXISTS = "Output directory exists but `overwrite=False`."
+ERROR_FEATURES_EXISTS = "Output directory contains features but `overwrite=False`."
 
 
 def save_features(
@@ -20,7 +19,7 @@ def save_features(
     output_dir: Union[str, Path],
     loader: DataLoader,
     *,
-    max_samples: Optional[int] = 2**16,
+    max_samples: Optional[int] = None,
     overwrite: bool = False,
     verbose: bool = True,
 ) -> None:
@@ -32,11 +31,12 @@ def save_features(
         loader: `DataLoader` yielding tensor images as the first or only element.
         max_samples: Maximum samples per parquet file. If `None`, all features are saved
             into a single file. Defaults to 65536.
-        overwrite: Remove everything in output directory. Defaults to False.
+        overwrite: Remove all parquet files with the word `'features'` in output
+            directory. Defaults to False.
         verbose: Enable `tqdm.tqdm` progress bar. Defaults to True.
 
     Raises:
-        FileExistsError: Output directory exists but `overwrite=False`.
+        FileExistsError: Output containes features but `overwrite=False`.
         TypeError: Encoder model is not `XCiT`.
         ValueError: Loader `batch_size` is `None`.
         TypeError: The first or only batch element is not a batch of image tensors.
@@ -48,6 +48,7 @@ def save_features(
         yield_features(encoder=encoder, loader=loader),
         desc="Extracting features",
         disable=not verbose,
+        total=_try_length(loader),
     ):
         batches.append(batch)
         if max_samples is not None and len(batches) * loader.batch_size >= max_samples:
@@ -63,12 +64,21 @@ def save_features(
         )
 
 
+def _try_length(loader: DataLoader) -> Optional[int]:
+    try:
+        return len(loader)
+    except AttributeError:
+        return None
+
+
 def _prepare_output_dir(output_dir: Path, *, overwrite: bool) -> Path:
     output_dir = output_dir if isinstance(output_dir, Path) else Path(output_dir)
-    if output_dir.exists() and len(list(output_dir.iterdir())) > 0:
-        if not overwrite:
-            raise FileExistsError(ERROR_OUTPUT_EXISTS)
-        shutil.rmtree(output_dir)
+    if output_dir.exists():
+        for file in output_dir.iterdir():
+            if file.name.startswith("features") and file.name.endswith(".parquet"):
+                if not overwrite:
+                    raise FileExistsError(ERROR_FEATURES_EXISTS)
+                file.unlink()
     output_dir.mkdir(exist_ok=True, parents=True)
     return output_dir
 
