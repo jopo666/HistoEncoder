@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import polars as pl
+import torch
 from timm.models.xcit import XCiT
 from torch.utils.data import DataLoader
 
@@ -86,3 +87,18 @@ def test_yield_features_tiles() -> None:
     for feats, __ in F.yield_features(encoder, loader=create_tile_loader()):
         assert feats.shape == (2, encoder.embed_dim)
         break
+
+
+def test_extract_features() -> None:
+    encoder = F.create_encoder("prostate_small")
+    images = torch.zeros(4, 3, 224, 224)
+    assert torch.equal(F.extract_features(encoder, images), encoder(images))
+    for num_blocks in range(1, 16):
+        feats = F.extract_features(encoder, images, num_blocks=num_blocks)
+        assert feats.shape[1] == encoder.embed_dim * min(
+            num_blocks, len(encoder.blocks) + len(encoder.cls_attn_blocks)
+        )
+    assert (
+        F.extract_features(encoder, images, avg_pool=True).shape[1]
+        == encoder.embed_dim * 2
+    )

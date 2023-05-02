@@ -19,9 +19,12 @@ def save_features(
     output_dir: Union[str, Path],
     loader: DataLoader,
     *,
+    num_blocks: int = 1,
+    avg_pool: bool = False,
     max_samples: Optional[int] = None,
     overwrite: bool = False,
-    verbose: bool = True,
+    verbose: bool = False,
+    **tqdm_kwargs,
 ) -> None:
     """Write features to disk.
 
@@ -29,11 +32,17 @@ def save_features(
         encoder: XCiT encoder model for extracting features.
         output_dir: Output directory for feature parquet files.
         loader: `DataLoader` yielding tensor images as the first or only element.
+        num_blocks: Number of attention blocks to include in the extracted features.
+            When `num_blocks>1`, the outputs of the last `num_blocks` attention blocks
+            are concatenated to make up the features. Defaults to 1.
+        avg_pool: Whether to concat the global average pool of the final attention block
+            features to the extracted features. Defaults to False.
         max_samples: Maximum samples per parquet file. If `None`, all features are saved
             into a single file. Defaults to 65536.
         overwrite: Remove all parquet files with the word `'features'` in output
             directory. Defaults to False.
-        verbose: Enable `tqdm.tqdm` progress bar. Defaults to True.
+        verbose: Enable `tqdm.tqdm` progress bar. Defaults to False.
+        tqdm_kwargs: Passed to `tqdm.tqdm`.
 
     Raises:
         FileExistsError: Output containes features but `overwrite=False`.
@@ -41,14 +50,18 @@ def save_features(
         ValueError: Loader `batch_size` is `None`.
         TypeError: The first or only batch element is not a batch of image tensors.
     """
+    if "disable" not in tqdm_kwargs:
+        tqdm_kwargs["disable"] = not verbose
+    if "total" not in tqdm_kwargs:
+        tqdm_kwargs["total"] = _try_length(loader)
     output_dir = _prepare_output_dir(output_dir, overwrite=overwrite)
     batches = []
     parquet_index = 1
     for batch in tqdm.tqdm(
-        yield_features(encoder=encoder, loader=loader),
-        desc="Extracting features",
-        disable=not verbose,
-        total=_try_length(loader),
+        yield_features(
+            encoder=encoder, loader=loader, num_blocks=num_blocks, avg_pool=avg_pool
+        ),
+        **tqdm_kwargs,
     ):
         batches.append(batch)
         if max_samples is not None and len(batches) * loader.batch_size >= max_samples:
