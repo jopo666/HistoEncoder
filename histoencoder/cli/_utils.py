@@ -3,11 +3,7 @@ from typing import NoReturn
 
 import rich_click as click
 
-
-def info(msg: str) -> None:
-    """Display info message."""
-    prefix = click.style("INFO: ", bold=True, fg="cyan")
-    click.echo(prefix + msg)
+BAR_FORMAT = "  {l_bar}{bar:20}{r_bar}{bar:-20b}"
 
 
 def warning(msg: str) -> None:
@@ -21,8 +17,3 @@ def error(msg: str) -> NoReturn:
     prefix = click.style("ERROR: ", bold=True, fg="red")
     click.echo(prefix + msg)
     sys.exit(1)
-
-
-def info_exit(msg: str) -> NoReturn:
-    info(msg)
-    sys.exit(0)
