@@ -6,7 +6,7 @@ authors = ["jopo666 <jopo@birdlover.com>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-HistoEncoder = 'histoencoder._cli._run:cli'
+HistoEncoder = 'histoencoder.cli:run'
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -18,9 +18,18 @@ rich-click = "^1.6"
 scikit-learn = "*"
 
 [tool.poetry.group.dev.dependencies]
-ipykernel = "*"
 pytest = "*"
 pytest-console-scripts = "^1.3.1"
+
+[tool.poetry.group.publication.dependencies]
+ipykernel = "*"
+umap-learn = "*"
+lifelines = "*"
+pandas = "*"
+scikit-survival = "*"
+seaborn = "^0.12.2"
+webdataset = "^0.2.48"
+faiss-cpu = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core"]
