@@ -134,7 +134,7 @@ def _unpack_coordinates(x: Tensor) -> dict[str, np.ndarray]:
 
 
 def _unpack_paths(x: list[str]) -> dict[str, np.ndarray]:
-    return {"path": np.array(x)}
+    return {"path": np.array([str(Path(z).resolve(strict=False)) for z in x])}
 
 
 def _unpack_coordinates_from_paths(paths: list[str]) -> dict[str, np.ndarray]:
