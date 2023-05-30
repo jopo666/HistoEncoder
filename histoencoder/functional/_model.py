@@ -1,21 +1,22 @@
 import torch
 from timm.models.xcit import (
     XCiT,
-    xcit_large_24_p16_224,
-    xcit_medium_24_p16_224,
-    xcit_small_12_p16_224,
+)
+from timm.models.xcit import (
+    xcit_medium_24_p16_224 as prostate_medium,
+)
+from timm.models.xcit import (
+    xcit_small_12_p16_224 as prostate_small,
 )
 
 ERROR_MODEL_NOT_FOUND = "Model '{}' could not be found, select from: {}"
-AVAILABLE_ENCODERS = {
-    "prostate_small": "/data/models/prostate_small.pth",
-    "prostate_medium": "/data/models/prostate_medium.pth",
-    "prostate_large": "/data/models/prostate_large.pth",
+MODEL_URLS = {
+    "prostate_small": "https://github.com/jopo666/HistoEncoder/releases/download/v0.0.1-state-dict/prostate_small.pth",
+    "prostate_medium": "https://github.com/jopo666/HistoEncoder/releases/download/v0.0.1-state-dict/prostate_medium.pth",
 }
-SIZE_TO_MODEL = {
-    "small": xcit_small_12_p16_224,
-    "medium": xcit_medium_24_p16_224,
-    "large": xcit_large_24_p16_224,
+NAME_TO_MODEL = {
+    "prostate_small": prostate_small,
+    "prostate_medium": prostate_medium,
 }
 
 
@@ -31,14 +32,14 @@ def create_encoder(model_name: str) -> XCiT:
     Returns:
         XCiT encoder model.
     """
-    model_url = AVAILABLE_ENCODERS.get(model_name.lower())
+    model_url = MODEL_URLS.get(model_name.lower())
     if model_url is None:
         raise ValueError(ERROR_MODEL_NOT_FOUND.format(model_name, list_encoders()))
     *_, model_size = model_name.split("_")
-    encoder = SIZE_TO_MODEL[model_size](num_classes=0)
-    encoder.load_state_dict(torch.load(model_url))
+    encoder = NAME_TO_MODEL[model_size](num_classes=0)
+    encoder.load_state_dict(torch.hub.load_state_dict_from_url(model_url))
     return encoder
 
 
 def list_encoders() -> list[str]:
-    return list(AVAILABLE_ENCODERS.keys())
+    return list(MODEL_URLS.keys())
