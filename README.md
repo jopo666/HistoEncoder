@@ -20,9 +20,6 @@ Foundation models for digital pathology.
 histological slide images, as described in [this paper](add_link). The `histoencoder`
 python package also exposes some useful functions for using the encoder models.
 
-> If you wish to use the extracted models without installing this package, see the
-> examples below!
-
 ## Installation
 
 ```bash
