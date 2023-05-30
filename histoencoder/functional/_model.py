@@ -11,8 +11,8 @@ from timm.models.xcit import (
 
 ERROR_MODEL_NOT_FOUND = "Model '{}' could not be found, select from: {}"
 MODEL_URLS = {
-    "prostate_small": "https://github.com/jopo666/HistoEncoder/releases/download/v0.0.1-state-dict/prostate_small.pth",
-    "prostate_medium": "https://github.com/jopo666/HistoEncoder/releases/download/v0.0.1-state-dict/prostate_medium.pth",
+    "prostate_small": "https://dl.dropboxusercontent.com/s/tbff9wslc8p7ie3/prostate_small.pth?dl=0",
+    "prostate_medium": "https://dl.dropboxusercontent.com/s/k1fr09x5auki8sp/prostate_medium.pth?dl=0",
 }
 NAME_TO_MODEL = {
     "prostate_small": prostate_small,
@@ -35,8 +35,7 @@ def create_encoder(model_name: str) -> XCiT:
     model_url = MODEL_URLS.get(model_name.lower())
     if model_url is None:
         raise ValueError(ERROR_MODEL_NOT_FOUND.format(model_name, list_encoders()))
-    *_, model_size = model_name.split("_")
-    encoder = NAME_TO_MODEL[model_size](num_classes=0)
+    encoder = NAME_TO_MODEL[model_name](num_classes=0)
     encoder.load_state_dict(torch.hub.load_state_dict_from_url(model_url))
     return encoder
 

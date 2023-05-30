@@ -62,12 +62,6 @@ def test_freeze_layers_medium() -> None:
     check_encoder_blocks(encoder)
 
 
-def test_freeze_layers_large() -> None:
-    encoder = F.create_encoder("prostate_large")
-    check_encoder_cls_attn_blocks(encoder)
-    check_encoder_blocks(encoder)
-
-
 def unfreeze_encoder(encoder: XCiT) -> None:
     for param in encoder.parameters():
         param.requires_grad = True

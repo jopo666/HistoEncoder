@@ -1,6 +1,5 @@
 import rich_click as click
 
-from ._annotate import annotate
 from ._cluster import cluster
 from ._extract import extract
 
@@ -18,7 +17,7 @@ click.rich_click.COMMAND_GROUPS = {
     "HistoEncoder": [
         {
             "name": "Commands for slides processed with [bold red]HistoPrep[/bold red]",
-            "commands": ["extract", "cluster", "annotate"],
+            "commands": ["extract", "cluster"],
         },
     ]
 }
@@ -31,4 +30,3 @@ def run() -> None:
 
 run.add_command(extract)
 run.add_command(cluster)
-run.add_command(annotate)

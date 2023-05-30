@@ -10,7 +10,7 @@ import histoencoder.functional as F
 from ._utils import BAR_FORMAT, error
 
 DEFAULTS = {
-    "num_clusters": (8, 16, 24, 32, 64),
+    "num_clusters": (8, 16, 24, 32, 64, 128),
     "overwrite": False,
     "verbose": False,
 }
