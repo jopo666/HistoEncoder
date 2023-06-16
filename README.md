@@ -91,13 +91,13 @@ HistoPrep --input "./slide_images/*.tiff" --output ./tile_images --width 512 --o
 2. Extract features for each tile image.
 
 ```bash
-HistoEncoder extract --input ./tile_images --model-name prostate_small
+HistoEncoder extract --input_dir ./tile_images --model-name prostate_small
 ```
 
 3. Cluster extracted features.
 
 ```bash
-HistoEncoder cluster --input ./tile_images
+HistoEncoder cluster --input_dir ./tile_images
 ```
 
 Now `train_tiles` contains a directory for each slide with the following contents.
