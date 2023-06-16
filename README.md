@@ -85,7 +85,7 @@ pip install histoencoder
    [`HistoPrep`](https://github.com/jopo666/HistoPrep).
 
 ```bash
-HistoPrep --input './slide_images/*.tiff' --output ./tile_images --width 512 --overlap 0.5 --max-background 0.5
+HistoPrep --input "./slide_images/*.tiff" --output ./tile_images --width 512 --overlap 0.5 --max-background 0.5
 ```
 
 2. Extract features for each tile image.
