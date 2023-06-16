@@ -8,7 +8,7 @@ def test_extract_sequential(script_runner) -> None:  # noqa
     feature_path = DATA_DIR / "slide" / "features.parquet"
     if feature_path.exists():
         feature_path.unlink()
-    ret = script_runner.run(*f"{COMMAND} -i {DATA_DIR} {DEFAULTS}".split(" "))
+    ret = script_runner.run(f"{COMMAND} -i {DATA_DIR} {DEFAULTS}".split(" "))
     assert ret.success
     assert feature_path.exists()
     feature_path.unlink()
@@ -24,7 +24,7 @@ def test_extract_parallel(script_runner) -> None:  # noqa
     feature_path = DATA_DIR / "slide" / "features.parquet"
     if feature_path.exists():
         feature_path.unlink()
-    ret = script_runner.run(*f"{COMMAND} -i {DATA_DIR} -p {DEFAULTS}".split(" "))
+    ret = script_runner.run(f"{COMMAND} -i {DATA_DIR} -p {DEFAULTS}".split(" "))
     assert ret.success
     assert feature_path.exists()
     feature_path.unlink()
