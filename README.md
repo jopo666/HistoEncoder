@@ -42,7 +42,7 @@ tile images with similar histological patterns (cuz that's what the model is goo
 You can do this at a slide level or for a whole dataset to automatically annotate slide
 images.
 
-![automatically annotate datasets](docs/static/summary.png)
+![automatically annotate datasets](docs/static/summary.jpeg)
 
 In the figure above, you can see UMAP representation of epithelium tissue of the
 Radboud split of the [PANDA](https://www.kaggle.com/c/prostate-cancer-grade-assessment)
