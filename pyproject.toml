@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "histoencoder"
 version = "0.1.0"
-description = ""
+description = "Foundation models for digital pathology."
 authors = ["jopo666 <jopo@birdlover.com>"]
 readme = "README.md"
 
