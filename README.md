@@ -79,7 +79,9 @@ help and share my training scripts/methods! Just send me an [email](mailto:joona
 pip install histoencoder
 ```
 
-## CLI usage
+## Usage
+
+### `HistoEncoder` command line interface
 
 1. Cut histological slide images into small tile images with
    [`HistoPrep`](https://github.com/jopo666/HistoPrep).
@@ -115,7 +117,7 @@ train_tiles
     └── tiles  [52473 entries exceeds filelimit, not opening dir]
 ```
 
-## `histoencoder` module usage
+### `histoencoder` module
 
 If you already have tile images, or want to use your own programs for extracting tile
 images, you can use the `histoencoder` python package! Check out the [API
