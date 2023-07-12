@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "histoencoder"
-version = "0.1.0"
+version = "0.1.1"
 description = "Foundation models for digital pathology."
 authors = ["jopo666 <jopo@birdlover.com>"]
 readme = "README.md"
@@ -15,7 +15,7 @@ torch = "^2"
 torchvision = "^0.15"
 histoprep = "^2"
 rich-click = "^1.6"
-scikit-learn = "*"
+scikit-learn = "^1.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
