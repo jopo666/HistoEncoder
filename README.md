@@ -70,9 +70,6 @@ tissue types (eg. `colon_*`, `breast_*` and so on). This fine-tuning step does n
 require that much computing power so it's doable even though you don't have access to
 thousands of GPUs.
 
-If you're interest in fine-tuning the models for other tissue types, I'm happy to
-help and share my training scripts/methods! Just send me an [email](mailto:joona.pohjonen@icloud.com)!
-
 ## Installation
 
 ```bash
