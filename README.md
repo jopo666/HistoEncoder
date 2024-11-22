@@ -138,12 +138,13 @@ github repository. There's a preprint coming, but I wanted to share the model to
 public as quickly as possible! :)
 
 ```
-@misc{histoencoder,
-  author = {Pohjonen, Joona},
-  title = {HistoEncoder: Foundation models for digital pathology},
-  year = {2023},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {https://github.com/jopo666/HistoEncoder},
+@misc{histoEncoder,
+      title={HistoEncoder: a digital pathology foundation model for prostate cancer}, 
+      author={Joona Pohjonen and Abderrahim-Oussama Batouche and Antti Rannikko and Kevin Sandeman and Andrew Erickson and Esa Pitkanen and Tuomas Mirtti},
+      year={2024},
+      eprint={2411.11458},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2411.11458}, 
 }
 ```
