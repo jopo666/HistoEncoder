@@ -134,11 +134,26 @@ for images in your_fancy_dataloader:
 ## Citation
 
 If you use `HistoEncoder` models or pipelines in your publication, please cite the
-github repository. There's a preprint coming, but I wanted to share the model to the
-public as quickly as possible! :)
+GitHub repository. 
+
+### Peer-reviewed paper
+@misc{histoEncoder_pr,
+      title={HistoEncoder: a digital pathology foundation model for prostate cancer}, 
+      author={Joona Pohjonen and Oussama Batouche and Janne Kantola and Antti Rannikko and Kevin Sandeman and Andrew Erickson and Esa Pitkanen and Tuomas Mirtti},
+      journal = {Journal of Pathology Informatics},
+      pages = {100715},
+      year = {2026},
+      issn = {2153-3539},
+      doi = {https://doi.org/10.1016/j.jpi.2026.100715},
+      url = {https://www.sciencedirect.com/science/article/pii/S215335392600177X},
+      keywords = {Foundation models, Prostate cancer, HistoEncoder, Digital pathology, Prognosis prediction, Self-supervised learning}
+}
+
+
+### Pre-Print
 
 ```
-@misc{histoEncoder,
+@misc{histoEncoder_pp,
       title={HistoEncoder: a digital pathology foundation model for prostate cancer}, 
       author={Joona Pohjonen and Abderrahim-Oussama Batouche and Antti Rannikko and Kevin Sandeman and Andrew Erickson and Esa Pitkanen and Tuomas Mirtti},
       year={2024},
