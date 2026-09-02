@@ -137,6 +137,9 @@ If you use `HistoEncoder` models or pipelines in your publication, please cite t
 GitHub repository. 
 
 ### Peer-reviewed paper
+
+
+```
 @misc{histoEncoder_pr,
       title={HistoEncoder: a digital pathology foundation model for prostate cancer}, 
       author={Joona Pohjonen and Oussama Batouche and Janne Kantola and Antti Rannikko and Kevin Sandeman and Andrew Erickson and Esa Pitkanen and Tuomas Mirtti},
@@ -148,6 +151,7 @@ GitHub repository.
       url = {https://www.sciencedirect.com/science/article/pii/S215335392600177X},
       keywords = {Foundation models, Prostate cancer, HistoEncoder, Digital pathology, Prognosis prediction, Self-supervised learning}
 }
+```
 
 
 ### Pre-Print
